@@ -14,7 +14,18 @@ class PostQuerySet(models.QuerySet):
         popular_posts = self.annotate(likes_count=models.Count('likes'))\
             .order_by('-likes_count')
         return popular_posts
+    
+    def prefetch_tag_posts_count(self):
+        tags_with_posts_count = Tag.objects.annotate(
+            posts_count=models.Count('posts'))
+        prefetch_posts_count = models.Prefetch(
+            'tags',
+            queryset=tags_with_posts_count,
+        )
         
+        return self.prefetch_related(prefetch_posts_count)
+        
+    
     def fetch_with_comments_count(self):
         most_popular_posts_ids = [post.id for post in self]
         posts_with_comments = Post.objects.filter(
