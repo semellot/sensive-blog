@@ -4,12 +4,6 @@ from django.contrib.auth.models import User
 
 
 class PostQuerySet(models.QuerySet):
-
-    def year(self, year):
-        posts_at_year = self.filter(published_at__year=year)\
-            .order_by('published_at')
-        return posts_at_year
-    
     def popular(self):
         popular_posts = self.annotate(likes_count=models.Count('likes'))\
             .order_by('-likes_count')
@@ -24,7 +18,6 @@ class PostQuerySet(models.QuerySet):
         )
         
         return self.prefetch_related(prefetch_posts_count)
-        
     
     def fetch_with_comments_count(self):
         most_popular_posts_ids = [post.id for post in self]
