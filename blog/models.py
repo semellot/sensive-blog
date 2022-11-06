@@ -30,14 +30,14 @@ class PostQuerySet(models.QuerySet):
         most_popular_posts_ids = [post.id for post in self]
         posts_with_comments = Post.objects.filter(
                 id__in=most_popular_posts_ids
-            ).annotate(comments_count=models.Count('comments'))
+            ).annotate(comments_amount=models.Count('comments'))
         ids_and_comments = posts_with_comments.values_list(
-                'id', 'comments_count')
+                'id', 'comments_amount')
         count_for_id = dict(ids_and_comments)
         
         posts_with_comments_count = []
         for post in self:
-            post.comments_count = count_for_id[post.id]
+            post.comments_amount = count_for_id[post.id]
             posts_with_comments_count.append(post)
             
         return posts_with_comments_count
